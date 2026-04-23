@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Lab Sains - Taman Numerasi</title>
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #eef2f3; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        #main { display: flex; gap: 20px; width: 1100px; max-width: 95vw; }
+        #blocklyDiv { height: 550px; flex-grow: 1; border: 3px solid #34495e; border-radius: 12px; background: white; }
+        #sidebar { width: 320px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; }
+        
+        /* Visual Gelas Kimia (Beaker) */
+        #beaker-container { position: relative; width: 150px; height: 180px; margin: 20px auto; border: 4px solid #7f8c8d; border-top: none; border-radius: 0 0 20px 20px; overflow: hidden; background: rgba(255,255,255,0.5); }
+        #liquid { position: absolute; bottom: 0; width: 100%; height: 0%; background: #3498db; transition: all 0.5s ease; }
+        
+        #status-label { font-weight: bold; font-size: 1.2em; margin-top: 10px; color: #2c3e50; }
+        .data-box { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-top: 10px; text-align: left; font-family: monospace; }
+        .tag { display: inline-block; padding: 2px 6px; border-radius: 4px; color: white; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+
+    <h2>🧪 Lab Sains Taman Numerasi</h2>
+    <p>Simulasi Reaksi Asam-Basa & Volume Zat</p>
+
+    <div id="main">
+        <div id="blocklyDiv"></div>
+        <div id="sidebar">
+            <h3>Tabung Reaksi</h3>
+            <div id="beaker-container">
+                <div id="liquid"></div>
+            </div>
+            <div id="status-label">KOSONG</div>
+            
+            <div class="data-box">
+                <div>Volume Total: <span id="vol-val">0</span> ml</div>
+                <div>Tingkat pH: <span id="ph-val">7.0</span></div>
+                <div id="ph-type">-</div>
+            </div>
+
+            <button onclick="resetLab()" style="background:#e74c3c; color:white; border:none; padding:10px; width:100%; border-radius:8px; margin-top:15px; cursor:pointer; font-weight:bold;">Bersihkan Tabung</button>
+        </div>
+    </div>
+
+    <xml id="toolbox" style="display: none">
+        <category name="Zat Kimia" colour="210">
+            <block type="chemical_source"></block>
+        </category>
+        <category name="Reaksi" colour="120">
+            <block type="chemical_mixer"></block>
+        </category>
+    </xml>
+
+    <script>
+        // --- 1. DEFINISI BLOK SAINS ---
+        Blockly.defineBlocksWithJsonArray([
+          {
+            "type": "chemical_source",
+            "message0": "Zat: %1",
+            "args0": [{
+                "type": "field_dropdown", "name": "TYPE",
+                "options": [
+                  ["Asam Kuat (pH 1)", "1"],
+                  ["Asam Lemah (pH 4)", "4"],
+                  ["Air Murni (pH 7)", "7"],
+                  ["Basa Lemah (pH 10)", "10"],
+                  ["Basa Kuat (pH 14)", "14"]
+                ]
+            }],
+            "output": "Chemical", "colour": 210
+          },
+          {
+            "type": "chemical_mixer",
+            "message0": "Campur %1 ml %2 + %3 ml %4",
+            "args0": [
+              { "type": "field_number", "name": "VOL1", "value": 50, "min": 0 },
+              { "type": "input_value", "name": "CHEM1", "check": "Chemical" },
+              { "type": "field_number", "name": "VOL2", "value": 50, "min": 0 },
+              { "type": "input_value", "name": "CHEM2", "check": "Chemical" }
+            ],
+            "output": "Chemical", "colour": 120
+          }
+        ]);
+
+        const workspace = Blockly.inject('blocklyDiv', { toolbox: document.getElementById('toolbox'), trashcan: true });
+
+        // --- 2. LOGIKA SAINS (Numerasi Kimia) ---
+        function getChemicalData(block) {
+            if (!block) return null;
+            
+            if (block.type === 'chemical_source') {
+                const ph = parseFloat(block.getFieldValue('TYPE'));
+                // Beri warna blok sesuai indikator pH universal
+                block.setColour(getPHColor(ph));
+                return { ph: ph, vol: 100 }; // Default volume sumber
+            }
+            
+            if (block.type === 'chemical_mixer') {
+                const v1 = parseFloat(block.getFieldValue('VOL1')) || 0;
+                const v2 = parseFloat(block.getFieldValue('VOL2')) || 0;
+                
+                const data1 = getChemicalData(block.getInputTargetBlock('CHEM1'));
+                const data2 = getChemicalData(block.getInputTargetBlock('CHEM2'));
+                
+                if (!data1 && !data2) return null;
+                if (data1 && !data2) return { ph: data1.ph, vol: v1 };
+                if (!data1 && data2) return { ph: data2.ph, vol: v2 };
+                
+                // Rumus Campuran pH (Logika Sederhana untuk Anak): (pH1*V1 + pH2*V2) / (V1+V2)
+                const mixedPH = ((data1.ph * v1) + (data2.ph * v2)) / (v1 + v2);
+                return { ph: mixedPH, vol: v1 + v2 };
+            }
+            return null;
+        }
+
+        function getPHColor(ph) {
+            if (ph < 3) return "#e74c3c"; // Merah (Asam Kuat)
+            if (ph < 6) return "#f39c12"; // Oranye (Asam Lemah)
+            if (ph < 8) return "#2ecc71"; // Hijau (Netral)
+            if (ph < 11) return "#3498db"; // Biru (Basa Lemah)
+            return "#9b59b6"; // Ungu (Basa Kuat)
+        }
+
+        function updateUI(data) {
+            const liquid = document.getElementById('liquid');
+            const status = document.getElementById('status-label');
+            
+            if (!data || data.vol === 0) {
+                liquid.style.height = "0%";
+                status.innerText = "KOSONG";
+                document.getElementById('ph-val').innerText = "7.0";
+                document.getElementById('vol-val').innerText = "0";
+                return;
+            }
+
+            // Visual Cairan
+            const height = Math.min((data.vol / 500) * 100, 100); // Max kapasitas 500ml
+            liquid.style.height = height + "%";
+            liquid.style.backgroundColor = getPHColor(data.ph);
+            
+            // Label Data
+            document.getElementById('vol-val').innerText = Math.round(data.vol);
+            document.getElementById('ph-val').innerText = data.ph.toFixed(1);
+            
+            let type = "NETRAL";
+            if (data.ph < 6.5) type = "ASAM";
+            if (data.ph > 7.5) type = "BASA";
+            status.innerText = type;
+            document.getElementById('ph-type').innerText = (data.ph < 6.5) ? "⚠️ Sifat: Korosif" : (data.ph > 7.5 ? "⚠️ Sifat: Licin/Pahit" : "✅ Aman");
+        }
+
+        function resetLab() {
+            workspace.clear();
+            updateUI(null);
+        }
+
+        workspace.addChangeListener(() => {
+            const blocks = workspace.getAllBlocks(false);
+            let finalData = null;
+            blocks.forEach(b => {
+                if (!b.getParent()) finalData = getChemicalData(b);
+            });
+            updateUI(finalData);
+        });
+    </script>
+</body>
+</html>
