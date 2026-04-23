@@ -9,7 +9,7 @@
         #main-container { display: flex; gap: 20px; width: 100%; max-width: 1400px; margin-top: 20px; }
         
         /* 1. Kolom Kiri: Blockly */
-        #blocklyDiv { height: 600px; flex: 2; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #blocklyDiv { height: 650px; flex: 2; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
         /* 2. Kolom Tengah: Gambar Referensi */
         #reference-panel { flex: 1; max-width: 320px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
@@ -69,7 +69,7 @@
     </xml>
 
     <script>
-        // --- 1. DEFINISI BLOK DENGAN DAFTAR BAHAN LENGKAP ---
+        // --- 1. DEFINISI BLOK BAHAN DAPUR BARU ---
         Blockly.defineBlocksWithJsonArray([
           {
             "type": "food_source",
@@ -77,21 +77,26 @@
             "args0": [{
                 "type": "field_dropdown", "name": "FOOD",
                 "options": [
-                  ["🔋 Asam Baterai", "0"],
-                  ["🧪 Asam Lambung", "1"],
-                  ["🍋 Jus Lemon", "2"],
-                  ["🥤 Cuka / Soda", "3"],
-                  ["🍅 Tomat", "4"],
-                  ["☕ Kopi Hitam", "5"],
-                  ["🥛 Susu", "6"],
-                  ["💧 Air Murni", "7"],
-                  ["🥚 Darah / Telur", "8"],
-                  ["🍞 Soda Kue", "9"],
-                  ["💊 Obat Maag", "10"],
-                  ["🧼 Larutan Sabun", "11"],
-                  ["🧴 Air Pemutih", "12"],
-                  ["🫧 Pembersih Lantai", "13"],
-                  ["🚿 Pembersih Saluran", "14"]
+                  ["🧪 Cuka Dapur", "2.5"],
+                  ["🍋 Jus Lemon", "2.2"],
+                  ["🥤 Minuman Soda", "3.0"],
+                  ["🍅 Tomat", "4.2"],
+                  ["🍌 Pisang", "5.0"],
+                  ["☕ Kopi Hitam", "5.1"],
+                  ["🍞 Beras (Nasi)", "6.0"],
+                  ["🥛 Susu", "6.6"],
+                  ["🧅 Bawang Merah", "5.5"],
+                  ["🧄 Bawang Putih", "5.8"],
+                  ["💧 Air Murni", "7.0"],
+                  ["🌻 Minyak Goreng", "7.0"],
+                  ["🫚 Lengkuas", "6.5"],
+                  ["🟡 Kunyit", "6.8"],
+                  ["🥚 Putih Telur", "8.0"],
+                  ["🍞 Soda Kue", "9.0"],
+                  ["💊 Obat Maag", "10.5"],
+                  ["🧼 Air Sabun", "11.0"],
+                  ["🧴 Air Pemutih", "12.5"],
+                  ["🚿 Pembersih Saluran", "14.0"]
                 ]
             }],
             "output": "Chemical", "colour": 210
@@ -111,14 +116,13 @@
 
         const workspace = Blockly.inject('blocklyDiv', { toolbox: document.getElementById('toolbox'), trashcan: true });
 
-        // --- 2. LOGIKA MATEMATIKA & WARNA ---
-        
+        // --- 2. LOGIKA WARNA & PERHITUNGAN ---
         function getPHColor(ph) {
-            // Skala warna sesuai standar Peta Warna pH
+            // Skala gradasi 0-14 sesuai peta warna
             const colors = [
-                "#e61d25", "#ed4022", "#f36d21", "#f8941d", "#fff100", // 0-4
-                "#d2df3b", "#66bb6a", "#00a651", "#00a99d", "#00aeef", // 5-9
-                "#2e3192", "#662d91", "#92278f", "#9e1f63", "#a11a4d"  // 10-14
+                "#e61d25", "#ed4022", "#f36d21", "#f8941d", "#fff100", 
+                "#d2df3b", "#66bb6a", "#00a651", "#00a99d", "#00aeef", 
+                "#2e3192", "#662d91", "#92278f", "#9e1f63", "#a11a4d" 
             ];
             return colors[Math.round(ph)] || "#ffffff";
         }
@@ -175,9 +179,7 @@
         workspace.addChangeListener(() => {
             const blocks = workspace.getAllBlocks(false);
             let finalData = null;
-            blocks.forEach(b => { 
-                if (!b.getParent()) finalData = getFoodData(b); 
-            });
+            blocks.forEach(b => { if (!b.getParent()) finalData = getFoodData(b); });
             updateUI(finalData);
         });
     </script>
