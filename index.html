@@ -2,11 +2,30 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>pH-Rahasia-Ramuan-di-Dapur-Kita</title>
+    <title>Si Yo: Membantu Ibu Memasak</title>
     <script src="https://unpkg.com/blockly/blockly.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #fdfbf7; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        #main-container { display: flex; gap: 20px; width: 100%; max-width: 1400px; margin-top: 20px; }
+        
+        /* --- Title Area (Maskot & Identitas) --- */
+        #title-container { 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            margin-bottom: 20px; 
+            background: white; 
+            padding: 15px 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+            width: 100%;
+            max-width: 1240px;
+        }
+        .maskot { height: 110px; width: auto; }
+        #title-text-area { display: flex; flex-direction: column; text-align: left; }
+        h2 { color: #2c3e50; margin: 0; font-size: 1.8em; }
+        .sub-h2 { color: #8e44ad; margin-top: 5px; margin-bottom: 0; font-weight: bold; }
+
+        #main-container { display: flex; gap: 20px; width: 100%; max-width: 1400px; margin-top: 10px; }
         
         /* 1. Kolom Kiri: Blockly */
         #blocklyDiv { height: 650px; flex: 2; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
@@ -31,8 +50,15 @@
 </head>
 <body>
 
-    <h2 style="color: #2c3e50;">🕵️‍♂️ pH-Rahasia-Ramuan-di-Dapur-Kita</h2>
-    <p style="color: #7f8c8d; margin-top: 0;">Campurkan bahan dapurmu dan cek tingkat keasamannya!</p>
+    <div id="title-container">
+        <img src="maskot-siyo.png" alt="Si Yo" class="maskot">
+        <div id="title-text-area">
+            <h2>🕵️‍♂️ Si Yo: Membantu Ibu Memasak</h2>
+            <p class="sub-h2">Taman Numerasi BBGTK D.I. Yogyakarta</p>
+        </div>
+    </div>
+
+    <p style="color: #7f8c8d; margin-top: 0;">Ayo bantu Ibu cek tingkat keasaman bahan makanan di dapur!</p>
 
     <div id="main-container">
         <div id="blocklyDiv"></div>
@@ -69,7 +95,7 @@
     </xml>
 
     <script>
-        // --- 1. DEFINISI BLOK BAHAN DAPUR BARU ---
+        // --- 1. DEFINISI BLOK BAHAN DAPUR ---
         Blockly.defineBlocksWithJsonArray([
           {
             "type": "food_source",
@@ -118,7 +144,6 @@
 
         // --- 2. LOGIKA WARNA & PERHITUNGAN ---
         function getPHColor(ph) {
-            // Skala gradasi 0-14 sesuai peta warna
             const colors = [
                 "#e61d25", "#ed4022", "#f36d21", "#f8941d", "#fff100", 
                 "#d2df3b", "#66bb6a", "#00a651", "#00a99d", "#00aeef", 
