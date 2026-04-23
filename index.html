@@ -12,7 +12,7 @@
         #blocklyDiv { height: 600px; flex: 2; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
         /* 2. Kolom Tengah: Gambar Referensi */
-        #reference-panel { flex: 1; max-width: 300px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
+        #reference-panel { flex: 1; max-width: 320px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
         #reference-panel img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; border: 1px solid #ddd; }
         
         /* 3. Kolom Kanan: Hasil & Data */
@@ -24,7 +24,6 @@
         
         #status-label { font-weight: bold; font-size: 1.2em; margin-top: 10px; color: #2c3e50; }
         .data-box { background: #f4f6f7; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: left; border-left: 4px solid #8e44ad; }
-        .data-box b { color: #8e44ad; }
         
         button { background: #8e44ad; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; margin-top: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; }
         button:hover { background: #732d91; transform: scale(1.03); }
@@ -33,17 +32,15 @@
 <body>
 
     <h2 style="color: #2c3e50;">🕵️‍♂️ pH-Rahasia-Ramuan-di-Dapur-Kita</h2>
-    <p style="color: #7f8c8d; margin-top: 0;">Campurkan bahan dapurmu dan temukan angka numerasi di balik warnanya!</p>
+    <p style="color: #7f8c8d; margin-top: 0;">Campurkan bahan dapurmu dan cek tingkat keasamannya!</p>
 
     <div id="main-container">
         <div id="blocklyDiv"></div>
 
         <div id="reference-panel">
             <h4 style="color: #8e44ad; margin-bottom: 5px;">Peta Warna pH</h4>
-            
             <img src="peta-warna-ph.png" alt="Peta Warna pH">
-            
-            <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 10px;">Gunakan gambar ini sebagai panduan warnamu!</p>
+            <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 10px;">Gunakan panduan ini untuk menentukan tingkat keasaman</p>
         </div>
 
         <div id="sidebar">
@@ -72,7 +69,7 @@
     </xml>
 
     <script>
-        // --- 1. DEFINISI BLOK BAHAN MAKANAN ---
+        // --- 1. DEFINISI BLOK DENGAN DAFTAR BAHAN LENGKAP ---
         Blockly.defineBlocksWithJsonArray([
           {
             "type": "food_source",
@@ -80,14 +77,21 @@
             "args0": [{
                 "type": "field_dropdown", "name": "FOOD",
                 "options": [
-                  ["🍋 Jus Jeruk (Asam)", "2.5"],
-                  ["🧪 Cuka Dapur (Asam)", "3.0"],
-                  ["🍅 Jus Tomat (Asam Lemah)", "4.5"],
-                  ["🥛 Susu Sapi (Hampir Netral)", "6.5"],
-                  ["💧 Air Murni (Netral)", "7.0"],
-                  ["🍳 Putih Telur (Basa Lemah)", "8.5"],
-                  ["🧼 Air Sabun (Basa)", "10.0"],
-                  ["🍞 Soda Kue (Basa Kuat)", "12.0"]
+                  ["🔋 Asam Baterai", "0"],
+                  ["🧪 Asam Lambung", "1"],
+                  ["🍋 Jus Lemon", "2"],
+                  ["🥤 Cuka / Soda", "3"],
+                  ["🍅 Tomat", "4"],
+                  ["☕ Kopi Hitam", "5"],
+                  ["🥛 Susu", "6"],
+                  ["💧 Air Murni", "7"],
+                  ["🥚 Darah / Telur", "8"],
+                  ["🍞 Soda Kue", "9"],
+                  ["💊 Obat Maag", "10"],
+                  ["🧼 Larutan Sabun", "11"],
+                  ["🧴 Air Pemutih", "12"],
+                  ["🫧 Pembersih Lantai", "13"],
+                  ["🚿 Pembersih Saluran", "14"]
                 ]
             }],
             "output": "Chemical", "colour": 210
@@ -107,16 +111,16 @@
 
         const workspace = Blockly.inject('blocklyDiv', { toolbox: document.getElementById('toolbox'), trashcan: true });
 
-        // --- 2. LOGIKA MATEMATIKA & SAINS ---
+        // --- 2. LOGIKA MATEMATIKA & WARNA ---
         
         function getPHColor(ph) {
-            // Skala warna disesuaikan agar mirip dengan gambar referensi standar
-            if (ph < 3) return "#ff0000"; // Merah
-            if (ph < 5) return "#ff8000"; // Oranye
-            if (ph < 7) return "#ffff00"; // Kuning
-            if (ph < 8) return "#00ff00"; // Hijau
-            if (ph < 10) return "#0000ff"; // Biru
-            return "#8000ff"; // Ungu
+            // Skala warna sesuai standar Peta Warna pH
+            const colors = [
+                "#e61d25", "#ed4022", "#f36d21", "#f8941d", "#fff100", // 0-4
+                "#d2df3b", "#66bb6a", "#00a651", "#00a99d", "#00aeef", // 5-9
+                "#2e3192", "#662d91", "#92278f", "#9e1f63", "#a11a4d"  // 10-14
+            ];
+            return colors[Math.round(ph)] || "#ffffff";
         }
 
         function getFoodData(block) {
@@ -136,7 +140,6 @@
                 if (d1 && !d2) return { ph: d1.ph, vol: v1 };
                 if (!d1 && d2) return { ph: d2.ph, vol: v2 };
                 
-                // Rumus Numerasi Campuran pH
                 const mixedPH = ((d1.ph * v1) + (d2.ph * v2)) / (v1 + v2);
                 return { ph: mixedPH, vol: v1 + v2 };
             }
@@ -162,9 +165,9 @@
             document.getElementById('vol-val').innerText = Math.round(data.vol);
             document.getElementById('ph-val').innerText = data.ph.toFixed(1);
             
-            if (data.ph < 6.5) status.innerText = "ASAM Kecut 🍋";
-            else if (data.ph > 7.5) status.innerText = "BASA Pahit 🧼";
-            else status.innerText = "NETRAL Segar 💧";
+            if (data.ph < 6.5) status.innerText = "ASAM 🍋";
+            else if (data.ph > 7.5) status.innerText = "BASA 🧼";
+            else status.innerText = "NETRAL 💧";
         }
 
         function resetLab() { workspace.clear(); updateUI(null); }
