@@ -7,15 +7,27 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #fdfbf7; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
         #main-container { display: flex; gap: 20px; width: 100%; max-width: 1400px; margin-top: 20px; }
+        
+        /* 1. Kolom Kiri: Blockly */
         #blocklyDiv { height: 600px; flex: 2; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        /* 2. Kolom Tengah: Gambar Referensi */
         #reference-panel { flex: 1; max-width: 300px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
         #reference-panel img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; border: 1px solid #ddd; }
+        
+        /* 3. Kolom Kanan: Hasil & Data */
         #sidebar { flex: 1; max-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #8e44ad; }
-        #beaker-container { position: relative; width: 130px; height: 160px; margin: 15px auto; border: 5px solid #bdc3c7; border-top: none; border-radius: 0 0 25px 25px; overflow: hidden; background: #fff; }
+        
+        /* Visual Gelas Lab Dapur */
+        #beaker-container { position: relative; width: 130px; height: 160px; margin: 15px auto; border: 5px solid #bdc3c7; border-top: none; border-radius: 0 0 25px 25px; overflow: hidden; background: #fff; box-shadow: 0 8px 0 #ecf0f1; }
         #liquid { position: absolute; bottom: 0; width: 100%; height: 0%; background: #fff; transition: all 0.6s ease; }
+        
         #status-label { font-weight: bold; font-size: 1.2em; margin-top: 10px; color: #2c3e50; }
         .data-box { background: #f4f6f7; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: left; border-left: 4px solid #8e44ad; }
-        button { background: #8e44ad; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; margin-top: 15px; cursor: pointer; font-weight: bold; }
+        .data-box b { color: #8e44ad; }
+        
+        button { background: #8e44ad; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; margin-top: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #732d91; transform: scale(1.03); }
     </style>
 </head>
 <body>
@@ -28,7 +40,9 @@
 
         <div id="reference-panel">
             <h4 style="color: #8e44ad; margin-bottom: 5px;">Peta Warna pH</h4>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/PH_Scale.svg/1200px-PH_Scale.svg.png" alt="Skala pH">
+            
+            <img src="peta-warna-ph.png" alt="Peta Warna pH">
+            
             <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 10px;">Gunakan gambar ini sebagai panduan warnamu!</p>
         </div>
 
@@ -38,10 +52,12 @@
                 <div id="liquid"></div>
             </div>
             <div id="status-label">KOSONG</div>
+            
             <div class="data-box">
                 <div><b>Volume:</b> <span id="vol-val">0</span> ml</div>
                 <div><b>Angka pH:</b> <span id="ph-val">7.0</span></div>
             </div>
+
             <button onclick="resetLab()">Cuci Gelas</button>
         </div>
     </div>
@@ -56,6 +72,7 @@
     </xml>
 
     <script>
+        // --- 1. DEFINISI BLOK BAHAN MAKANAN ---
         Blockly.defineBlocksWithJsonArray([
           {
             "type": "food_source",
@@ -90,13 +107,16 @@
 
         const workspace = Blockly.inject('blocklyDiv', { toolbox: document.getElementById('toolbox'), trashcan: true });
 
+        // --- 2. LOGIKA MATEMATIKA & SAINS ---
+        
         function getPHColor(ph) {
-            if (ph < 3) return "#ff0000"; 
-            if (ph < 5) return "#ff8000"; 
-            if (ph < 7) return "#ffff00"; 
-            if (ph < 8) return "#00ff00"; 
-            if (ph < 10) return "#0000ff"; 
-            return "#8000ff"; 
+            // Skala warna disesuaikan agar mirip dengan gambar referensi standar
+            if (ph < 3) return "#ff0000"; // Merah
+            if (ph < 5) return "#ff8000"; // Oranye
+            if (ph < 7) return "#ffff00"; // Kuning
+            if (ph < 8) return "#00ff00"; // Hijau
+            if (ph < 10) return "#0000ff"; // Biru
+            return "#8000ff"; // Ungu
         }
 
         function getFoodData(block) {
@@ -116,6 +136,7 @@
                 if (d1 && !d2) return { ph: d1.ph, vol: v1 };
                 if (!d1 && d2) return { ph: d2.ph, vol: v2 };
                 
+                // Rumus Numerasi Campuran pH
                 const mixedPH = ((d1.ph * v1) + (d2.ph * v2)) / (v1 + v2);
                 return { ph: mixedPH, vol: v1 + v2 };
             }
