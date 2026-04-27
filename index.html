@@ -91,6 +91,12 @@
             cursor: pointer; font-weight: bold; font-size: 1em;
             margin-top: auto;
         }
+
+        /* Menyesuaikan tampilan toolbox horizontal agar rapi */
+        .blocklyToolboxDiv {
+            background-color: #f9f0ff !important;
+            border-bottom: 1px solid #8e44ad;
+        }
     </style>
 </head>
 <body>
@@ -151,7 +157,7 @@
                 "type": "field_dropdown", "name": "FOOD",
                 "options": [
                   ["🧂 Garam", "7.0"], 
-                  ["🍬 Gula", "7.01"], /* Sedikit beda agar sistem dropdown tidak bingung jika ada value kembar */
+                  ["🍬 Gula", "7.01"], 
                   ["🧪 Cuka", "2.5"], 
                   ["🍋 Jus Lemon", "2.2"],
                   ["🥤 Soda", "3.0"], 
@@ -179,15 +185,15 @@
           }
         ]);
 
+        // Konfigurasi agar Toolbox berada di ATAS secara HORIZONTAL
         const workspace = Blockly.inject('blocklyDiv', { 
             toolbox: document.getElementById('toolbox'), 
             trashcan: true,
             scrollbars: true,
+            horizontalLayout: true, // Membuat daftar blok horizontal
+            toolboxPosition: 'start', // Posisi di awal (atas jika horizontal)
             move: { drag: true, wheel: true }
         });
-
-        // Agar blok otomatis berada di atas ruang editor
-        workspace.addChangeListener(Blockly.Events.disableOrphans);
 
         function getPHColor(ph) {
             const colors = ["#e61d25","#ed4022","#f36d21","#f8941d","#fff100","#d2df3b","#66bb6a","#00a651","#00a99d","#00aeef","#2e3192","#662d91","#92278f","#9e1f63","#a11a4d"];
