@@ -31,16 +31,16 @@
 
         #main-container { display: flex; gap: 20px; width: 100%; max-width: 1400px; margin-top: 10px; }
         
-        /* 1. Kolom Kiri: Blockly */
-        #blocklyDiv { height: 650px; flex: 2; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        /* 1. Kolom Kiri: Blockly (Sekarang Lebih Luas) */
+        #blocklyDiv { height: 650px; flex: 3; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        /* 2. Kolom Tengah: Gambar Referensi */
-        #reference-panel { flex: 1; max-width: 320px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
-        #reference-panel img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; border: 1px solid #ddd; }
+        /* 2. Kolom Kanan: Hasil, Data & Referensi */
+        #sidebar { flex: 1; max-width: 350px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #8e44ad; }
         
-        /* 3. Kolom Kanan: Hasil & Data */
-        #sidebar { flex: 1; max-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #8e44ad; }
-        
+        /* Peta Warna pH di dalam Sidebar */
+        .reference-box { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .reference-box img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd; }
+
         /* Visual Gelas Lab Dapur */
         #beaker-container { position: relative; width: 130px; height: 160px; margin: 15px auto; border: 5px solid #bdc3c7; border-top: none; border-radius: 0 0 25px 25px; overflow: hidden; background: #fff; box-shadow: 0 8px 0 #ecf0f1; }
         #liquid { position: absolute; bottom: 0; width: 100%; height: 0%; background: #fff; transition: all 0.6s ease; }
@@ -71,13 +71,13 @@
     <div id="main-container">
         <div id="blocklyDiv"></div>
 
-        <div id="reference-panel">
-            <h4 style="color: #8e44ad; margin-bottom: 5px;">Peta Warna pH</h4>
-            <img src="peta-warna-ph.png" alt="Peta Warna pH">
-            <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 10px;">Gunakan panduan ini untuk menentukan tingkat keasaman</p>
-        </div>
-
         <div id="sidebar">
+            <div class="reference-box">
+                <h4 style="color: #8e44ad; margin: 0 0 10px 0;">Peta Warna pH</h4>
+                <img src="peta-warna-ph.png" alt="Peta Warna pH">
+                <p style="font-size: 0.75em; color: #7f8c8d; margin-top: 5px;">Gunakan panduan ini untuk cek pH</p>
+            </div>
+
             <h3>Gelas Eksperimen</h3>
             <div id="beaker-container">
                 <div id="liquid"></div>
@@ -169,53 +169,3 @@
                 return { ph: ph, vol: 100 };
             }
             if (block.type === 'food_mixer') {
-                const v1 = parseFloat(block.getFieldValue('VOL1')) || 0;
-                const v2 = parseFloat(block.getFieldValue('VOL2')) || 0;
-                const d1 = getFoodData(block.getInputTargetBlock('CHEM1'));
-                const d2 = getFoodData(block.getInputTargetBlock('CHEM2'));
-                
-                if (!d1 && !d2) return null;
-                if (d1 && !d2) return { ph: d1.ph, vol: v1 };
-                if (!d1 && d2) return { ph: d2.ph, vol: v2 };
-                
-                const mixedPH = ((d1.ph * v1) + (d2.ph * v2)) / (v1 + v2);
-                return { ph: mixedPH, vol: v1 + v2 };
-            }
-            return null;
-        }
-
-        function updateUI(data) {
-            const liquid = document.getElementById('liquid');
-            const status = document.getElementById('status-label');
-            
-            if (!data || data.vol === 0) {
-                liquid.style.height = "0%";
-                status.innerText = "KOSONG";
-                document.getElementById('vol-val').innerText = "0";
-                document.getElementById('ph-val').innerText = "7.0";
-                return;
-            }
-
-            const height = Math.min((data.vol / 500) * 100, 100);
-            liquid.style.height = height + "%";
-            liquid.style.backgroundColor = getPHColor(data.ph);
-            
-            document.getElementById('vol-val').innerText = Math.round(data.vol);
-            document.getElementById('ph-val').innerText = data.ph.toFixed(1);
-            
-            if (data.ph < 6.5) status.innerText = "ASAM 🍋";
-            else if (data.ph > 7.5) status.innerText = "BASA 🧼";
-            else status.innerText = "NETRAL 💧";
-        }
-
-        function resetLab() { workspace.clear(); updateUI(null); }
-
-        workspace.addChangeListener(() => {
-            const blocks = workspace.getAllBlocks(false);
-            let finalData = null;
-            blocks.forEach(b => { if (!b.getParent()) finalData = getFoodData(b); });
-            updateUI(finalData);
-        });
-    </script>
-</body>
-</html>
