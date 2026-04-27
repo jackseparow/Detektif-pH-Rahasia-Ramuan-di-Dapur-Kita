@@ -31,20 +31,18 @@
             line-height: 1.4; font-size: 0.9em; margin-bottom: 15px; 
         }
 
-        /* --- Layout Utama: Tetap Berjajar Horizontal --- */
         #main-container { 
             display: flex; 
             flex-direction: row; 
             gap: 15px; 
             width: 100%; 
             max-width: 1400px; 
-            align-items: flex-start; /* Mengunci awal dari atas */
+            align-items: flex-start; 
             justify-content: center;
         }
         
-        /* 1. Kolom Editor Blockly */
         #blocklyDiv { 
-            height: 720px; /* Tinggi dikunci agar sejajar dengan sidebar */
+            height: 720px; 
             flex: 2; 
             min-width: 350px; 
             border: 3px solid #8e44ad; 
@@ -54,9 +52,8 @@
             box-sizing: border-box;
         }
         
-        /* 2. Kolom Sidebar (Gelas Hasil) */
         #sidebar { 
-            height: 720px; /* Tinggi SAMA PERSIS dengan blocklyDiv */
+            height: 720px; 
             flex: 1; 
             min-width: 300px; 
             background: white; 
@@ -67,7 +64,7 @@
             border-top: 5px solid #8e44ad; 
             display: flex; 
             flex-direction: column; 
-            justify-content: space-between; /* Menarik tombol ke batas paling bawah */
+            justify-content: space-between; 
             box-sizing: border-box;
         }
         
@@ -92,10 +89,8 @@
             background: #8e44ad; color: white; border: none; 
             padding: 15px; width: 100%; border-radius: 8px; 
             cursor: pointer; font-weight: bold; font-size: 1em;
-            margin-top: auto; /* Memastikan tombol nempel ke bawah */
+            margin-top: auto;
         }
-
-        /* Tidak ada Media Query untuk tumpuk vertikal agar di HP tetap berjajar horizontal */
     </style>
 </head>
 <body>
@@ -155,9 +150,18 @@
             "args0": [{
                 "type": "field_dropdown", "name": "FOOD",
                 "options": [
-                  ["🧂 Garam", "7.0"], ["🍬 Gula", "7.0"], ["🧪 Cuka", "2.5"], ["🍋 Jus Lemon", "2.2"],
-                  ["🥤 Soda", "3.0"], ["🌶️ Cabai", "4.5"], ["🧉 Kecap", "5.0"], ["🍅 Tomat", "4.2"],
-                  ["🥛 Susu", "6.6"], ["💧 Air", "7.0"], ["🍞 Soda Kue", "9.0"], ["💊 Obat Maag", "10.5"]
+                  ["🧂 Garam", "7.0"], 
+                  ["🍬 Gula", "7.01"], /* Sedikit beda agar sistem dropdown tidak bingung jika ada value kembar */
+                  ["🧪 Cuka", "2.5"], 
+                  ["🍋 Jus Lemon", "2.2"],
+                  ["🥤 Soda", "3.0"], 
+                  ["🌶️ Cabai", "4.5"], 
+                  ["🧉 Kecap", "5.0"], 
+                  ["🍅 Tomat", "4.2"],
+                  ["🥛 Susu", "6.6"], 
+                  ["💧 Air", "7.0"], 
+                  ["🍞 Soda Kue", "9.0"], 
+                  ["💊 Obat Maag", "10.5"]
                 ]
             }],
             "output": "Chemical", "colour": 210
@@ -181,6 +185,9 @@
             scrollbars: true,
             move: { drag: true, wheel: true }
         });
+
+        // Agar blok otomatis berada di atas ruang editor
+        workspace.addChangeListener(Blockly.Events.disableOrphans);
 
         function getPHColor(ph) {
             const colors = ["#e61d25","#ed4022","#f36d21","#f8941d","#fff100","#d2df3b","#66bb6a","#00a651","#00a99d","#00aeef","#2e3192","#662d91","#92278f","#9e1f63","#a11a4d"];
