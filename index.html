@@ -17,16 +17,16 @@
         h2 { color: #2c3e50; margin: 0; font-size: clamp(1.1em, 4vw, 1.6em); }
         .sub-h2 { color: #8e44ad; margin: 5px 0 0 0; font-weight: bold; font-size: 0.9em; }
 
-        #instruction-text { color: #7f8c8d; text-align: center; max-width: 800px; line-height: 1.4; font-size: 0.9em; margin-bottom: 10px; }
+        #instruction-text { color: #7f8c8d; text-align: center; max-width: 800px; line-height: 1.4; font-size: 0.9em; margin-bottom: 15px; }
         .highlight { color: #8e44ad; font-weight: bold; }
 
-        #main-container { display: flex; flex-wrap: wrap; gap: 15px; width: 100%; max-width: 1400px; }
+        #main-container { display: flex; flex-wrap: wrap; gap: 15px; width: 100%; max-width: 1400px; align-items: stretch; }
         
-        /* Area Blockly Luas */
-        #blocklyDiv { height: 600px; flex: 2; min-width: 350px; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        /* Area Blockly disesuaikan agar sejajar dengan sidebar */
+        #blocklyDiv { height: 680px; flex: 2; min-width: 350px; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
         /* Sidebar Hasil & Peta Warna */
-        #sidebar { flex: 1; min-width: 300px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #8e44ad; }
+        #sidebar { flex: 1; min-width: 300px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #8e44ad; display: flex; flex-direction: column; justify-content: space-between; }
         
         .reference-box { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
         .reference-box img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd; }
@@ -37,11 +37,11 @@
         #status-label { font-weight: bold; font-size: 1.1em; margin-top: 5px; color: #2c3e50; }
         .data-box { background: #f4f6f7; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: left; border-left: 4px solid #8e44ad; font-size: 0.9em; }
         
-        button { background: #8e44ad; color: white; border: none; padding: 10px; width: 100%; border-radius: 8px; margin-top: 10px; cursor: pointer; font-weight: bold; }
+        button { background: #8e44ad; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; margin-top: 10px; cursor: pointer; font-weight: bold; }
         
         @media (max-width: 800px) {
             #main-container { flex-direction: column; }
-            #blocklyDiv { height: 450px; }
+            #blocklyDiv { height: 500px; }
         }
     </style>
 </head>
@@ -56,27 +56,29 @@
     </div>
 
     <div id="instruction-text">
-        <p>Ayo bantu Ibu! <span class="highlight">Tarik blok bahan</span> ke editor. Warna cairan di gelas akan berubah sesuai tingkat pH campuranmu!</p>
+        <p>Ayo bantu Ibu cek tingkat keasaman bahan makanan di dapur! Caranya mudah: Tarik dan susun blok kode dari pilihan bahan di sebelah kiri ke halaman editor. Lihat bagaimana warna cairan di gelas berubah secara otomatis sesuai dengan ramuan yang kamu buat!</p>
     </div>
 
     <div id="main-container">
         <div id="blocklyDiv"></div>
 
         <div id="sidebar">
-            <div class="reference-box">
-                <h4 style="color: #8e44ad; margin: 0 0 8px 0; font-size: 0.9em;">Peta Warna pH</h4>
-                <img src="peta-warna-ph.png" alt="Peta Warna pH">
-            </div>
+            <div id="sidebar-content">
+                <div class="reference-box">
+                    <h4 style="color: #8e44ad; margin: 0 0 8px 0; font-size: 0.9em;">Peta Warna pH</h4>
+                    <img src="peta-warna-ph.png" alt="Peta Warna pH">
+                </div>
 
-            <h3 style="font-size: 1em; margin: 0;">Gelas Eksperimen</h3>
-            <div id="beaker-container">
-                <div id="liquid"></div>
-            </div>
-            <div id="status-label">KOSONG</div>
-            
-            <div class="data-box">
-                <div><b>Volume:</b> <span id="vol-val">0</span> ml</div>
-                <div><b>Angka pH:</b> <span id="ph-val">7.0</span></div>
+                <h3 style="font-size: 1em; margin: 0;">Gelas Eksperimen</h3>
+                <div id="beaker-container">
+                    <div id="liquid"></div>
+                </div>
+                <div id="status-label">KOSONG</div>
+                
+                <div class="data-box">
+                    <div><b>Volume:</b> <span id="vol-val">0</span> ml</div>
+                    <div><b>Angka pH:</b> <span id="ph-val">7.0</span></div>
+                </div>
             </div>
 
             <button onclick="resetLab()">Cuci Gelas</button>
@@ -93,7 +95,6 @@
     </xml>
 
     <script>
-        // 1. Definisi Blok
         Blockly.defineBlocksWithJsonArray([
           {
             "type": "food_source",
