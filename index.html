@@ -2,54 +2,47 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Si Yo: Membantu Ibu Memasak</title>
     <script src="https://unpkg.com/blockly/blockly.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #fdfbf7; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #fdfbf7; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; min-height: 100vh; }
         
-        /* --- Title Area (Maskot & Identitas) --- */
         #title-container { 
-            display: flex; 
-            align-items: center; 
-            gap: 20px; 
-            margin-bottom: 20px; 
-            background: white; 
-            padding: 15px 30px; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
-            width: 100%;
-            max-width: 1240px;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 15px; 
+            background: white; padding: 15px; border-radius: 15px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; max-width: 1200px;
         }
-        .maskot { height: 110px; width: auto; }
-        #title-text-area { display: flex; flex-direction: column; text-align: left; }
-        h2 { color: #2c3e50; margin: 0; font-size: 1.8em; }
-        .sub-h2 { color: #8e44ad; margin-top: 5px; margin-bottom: 0; font-weight: bold; }
+        .maskot { height: clamp(60px, 10vw, 90px); width: auto; }
+        h2 { color: #2c3e50; margin: 0; font-size: clamp(1.1em, 4vw, 1.6em); }
+        .sub-h2 { color: #8e44ad; margin: 5px 0 0 0; font-weight: bold; font-size: 0.9em; }
 
-        /* Petunjuk Penggunaan */
-        #instruction-text { color: #7f8c8d; margin-top: 0; text-align: center; max-width: 800px; line-height: 1.5; }
+        #instruction-text { color: #7f8c8d; text-align: center; max-width: 800px; line-height: 1.4; font-size: 0.9em; margin-bottom: 10px; }
         .highlight { color: #8e44ad; font-weight: bold; }
 
-        #main-container { display: flex; gap: 20px; width: 100%; max-width: 1400px; margin-top: 10px; }
+        #main-container { display: flex; flex-wrap: wrap; gap: 15px; width: 100%; max-width: 1400px; }
         
-        /* 1. Kolom Kiri: Blockly (Sekarang Lebih Luas) */
-        #blocklyDiv { height: 650px; flex: 3; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        /* Area Blockly Luas */
+        #blocklyDiv { height: 600px; flex: 2; min-width: 350px; border: 3px solid #8e44ad; border-radius: 12px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        /* 2. Kolom Kanan: Hasil, Data & Referensi */
-        #sidebar { flex: 1; max-width: 350px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #8e44ad; }
+        /* Sidebar Hasil & Peta Warna */
+        #sidebar { flex: 1; min-width: 300px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #8e44ad; }
         
-        /* Peta Warna pH di dalam Sidebar */
-        .reference-box { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .reference-box { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
         .reference-box img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd; }
 
-        /* Visual Gelas Lab Dapur */
-        #beaker-container { position: relative; width: 130px; height: 160px; margin: 15px auto; border: 5px solid #bdc3c7; border-top: none; border-radius: 0 0 25px 25px; overflow: hidden; background: #fff; box-shadow: 0 8px 0 #ecf0f1; }
-        #liquid { position: absolute; bottom: 0; width: 100%; height: 0%; background: #fff; transition: all 0.6s ease; }
+        #beaker-container { position: relative; width: 110px; height: 140px; margin: 10px auto; border: 4px solid #bdc3c7; border-top: none; border-radius: 0 0 20px 20px; overflow: hidden; background: #fff; }
+        #liquid { position: absolute; bottom: 0; width: 100%; height: 0%; transition: all 0.6s ease; }
         
-        #status-label { font-weight: bold; font-size: 1.2em; margin-top: 10px; color: #2c3e50; }
-        .data-box { background: #f4f6f7; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: left; border-left: 4px solid #8e44ad; }
+        #status-label { font-weight: bold; font-size: 1.1em; margin-top: 5px; color: #2c3e50; }
+        .data-box { background: #f4f6f7; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: left; border-left: 4px solid #8e44ad; font-size: 0.9em; }
         
-        button { background: #8e44ad; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; margin-top: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:hover { background: #732d91; transform: scale(1.03); }
+        button { background: #8e44ad; color: white; border: none; padding: 10px; width: 100%; border-radius: 8px; margin-top: 10px; cursor: pointer; font-weight: bold; }
+        
+        @media (max-width: 800px) {
+            #main-container { flex-direction: column; }
+            #blocklyDiv { height: 450px; }
+        }
     </style>
 </head>
 <body>
@@ -63,9 +56,7 @@
     </div>
 
     <div id="instruction-text">
-        <p>Ayo bantu Ibu cek tingkat keasaman bahan makanan di dapur!<br>
-        Caranya mudah: <span class="highlight">Tarik dan susun blok kode</span> dari pilihan bahan di sebelah kiri ke halaman editor. 
-        Lihat bagaimana warna cairan di gelas berubah secara otomatis sesuai dengan ramuan yang kamu buat!</p>
+        <p>Ayo bantu Ibu! <span class="highlight">Tarik blok bahan</span> ke editor. Warna cairan di gelas akan berubah sesuai tingkat pH campuranmu!</p>
     </div>
 
     <div id="main-container">
@@ -73,12 +64,11 @@
 
         <div id="sidebar">
             <div class="reference-box">
-                <h4 style="color: #8e44ad; margin: 0 0 10px 0;">Peta Warna pH</h4>
+                <h4 style="color: #8e44ad; margin: 0 0 8px 0; font-size: 0.9em;">Peta Warna pH</h4>
                 <img src="peta-warna-ph.png" alt="Peta Warna pH">
-                <p style="font-size: 0.75em; color: #7f8c8d; margin-top: 5px;">Gunakan panduan ini untuk cek pH</p>
             </div>
 
-            <h3>Gelas Eksperimen</h3>
+            <h3 style="font-size: 1em; margin: 0;">Gelas Eksperimen</h3>
             <div id="beaker-container">
                 <div id="liquid"></div>
             </div>
@@ -103,7 +93,7 @@
     </xml>
 
     <script>
-        // --- 1. DEFINISI BLOK BAHAN DAPUR ---
+        // 1. Definisi Blok
         Blockly.defineBlocksWithJsonArray([
           {
             "type": "food_source",
@@ -111,34 +101,16 @@
             "args0": [{
                 "type": "field_dropdown", "name": "FOOD",
                 "options": [
-                  ["🧂 Garam", "7.0"],
-                  ["🍬 Gula", "7.0"],
-                  ["🧪 Cuka Dapur", "2.5"],
-                  ["🍋 Jus Lemon", "2.2"],
-                  ["🥤 Minuman Soda", "3.0"],
-                  ["🌶️ Cabai", "4.5"],
-                  ["🧉 Kecap", "5.0"],
-                  ["🌑 Merica", "5.5"],
-                  ["🫚 Jahe", "5.8"],
-                  ["🍅 Tomat", "4.2"],
-                  ["🍌 Pisang", "5.0"],
-                  ["☕ Kopi Hitam", "5.1"],
-                  ["🍞 Beras (Nasi)", "6.0"],
-                  ["🥛 Susu", "6.6"],
-                  ["🧅 Bawang Merah", "5.5"],
-                  ["🧄 Bawang Putih", "5.8"],
-                  ["💧 Air Murni", "7.0"],
-                  ["🌻 Minyak Goreng", "7.0"],
-                  ["🥚 Putih Telur", "8.0"],
-                  ["🍞 Soda Kue", "9.0"],
-                  ["💊 Obat Maag", "10.5"]
+                  ["🧂 Garam", "7.0"], ["🍬 Gula", "7.0"], ["🧪 Cuka", "2.5"], ["🍋 Jus Lemon", "2.2"],
+                  ["🥤 Soda", "3.0"], ["🌶️ Cabai", "4.5"], ["🧉 Kecap", "5.0"], ["🍅 Tomat", "4.2"],
+                  ["🥛 Susu", "6.6"], ["💧 Air", "7.0"], ["🍞 Soda Kue", "9.0"], ["💊 Obat Maag", "10.5"]
                 ]
             }],
             "output": "Chemical", "colour": 210
           },
           {
             "type": "food_mixer",
-            "message0": "Mangkuk: Campur %1 ml %2 + %3 ml %4",
+            "message0": "Campur %1 ml %2 + %3 ml %4",
             "args0": [
               { "type": "field_number", "name": "VOL1", "value": 50, "min": 0 },
               { "type": "input_value", "name": "CHEM1", "check": "Chemical" },
@@ -149,15 +121,15 @@
           }
         ]);
 
-        const workspace = Blockly.inject('blocklyDiv', { toolbox: document.getElementById('toolbox'), trashcan: true });
+        const workspace = Blockly.inject('blocklyDiv', { 
+            toolbox: document.getElementById('toolbox'), 
+            trashcan: true,
+            scrollbars: true,
+            move: { drag: true, wheel: true }
+        });
 
-        // --- 2. LOGIKA WARNA & PERHITUNGAN ---
         function getPHColor(ph) {
-            const colors = [
-                "#e61d25", "#ed4022", "#f36d21", "#f8941d", "#fff100", 
-                "#d2df3b", "#66bb6a", "#00a651", "#00a99d", "#00aeef", 
-                "#2e3192", "#662d91", "#92278f", "#9e1f63", "#a11a4d" 
-            ];
+            const colors = ["#e61d25","#ed4022","#f36d21","#f8941d","#fff100","#d2df3b","#66bb6a","#00a651","#00a99d","#00aeef","#2e3192","#662d91","#92278f","#9e1f63","#a11a4d"];
             return colors[Math.round(ph)] || "#ffffff";
         }
 
@@ -169,3 +141,42 @@
                 return { ph: ph, vol: 100 };
             }
             if (block.type === 'food_mixer') {
+                const v1 = parseFloat(block.getFieldValue('VOL1')) || 0;
+                const v2 = parseFloat(block.getFieldValue('VOL2')) || 0;
+                const d1 = getFoodData(block.getInputTargetBlock('CHEM1'));
+                const d2 = getFoodData(block.getInputTargetBlock('CHEM2'));
+                if (!d1 && !d2) return null;
+                if (d1 && !d2) return { ph: d1.ph, vol: v1 };
+                if (!d1 && d2) return { ph: d2.ph, vol: v2 };
+                return { ph: ((d1.ph * v1) + (d2.ph * v2)) / (v1 + v2), vol: v1 + v2 };
+            }
+            return null;
+        }
+
+        function updateUI(data) {
+            const liq = document.getElementById('liquid');
+            const sts = document.getElementById('status-label');
+            if (!data || data.vol === 0) {
+                liq.style.height = "0%"; sts.innerText = "KOSONG";
+                document.getElementById('vol-val').innerText = "0";
+                document.getElementById('ph-val').innerText = "7.0";
+                return;
+            }
+            liq.style.height = Math.min((data.vol / 500) * 100, 100) + "%";
+            liq.style.backgroundColor = getPHColor(data.ph);
+            document.getElementById('vol-val').innerText = Math.round(data.vol);
+            document.getElementById('ph-val').innerText = data.ph.toFixed(1);
+            sts.innerText = data.ph < 6.5 ? "ASAM 🍋" : (data.ph > 7.5 ? "BASA 🧼" : "NETRAL 💧");
+        }
+
+        function resetLab() { workspace.clear(); updateUI(null); }
+
+        workspace.addChangeListener(() => {
+            const blocks = workspace.getAllBlocks(false);
+            let finalData = null;
+            blocks.forEach(b => { if (!b.getParent()) finalData = getFoodData(b); });
+            updateUI(finalData);
+        });
+    </script>
+</body>
+</html>
