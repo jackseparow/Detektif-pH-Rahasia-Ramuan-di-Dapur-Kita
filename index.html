@@ -41,6 +41,7 @@
             justify-content: center;
         }
         
+        /* 1. Editor Blockly */
         #blocklyDiv { 
             height: 720px; 
             flex: 2; 
@@ -49,9 +50,10 @@
             border-radius: 12px; 
             background: white; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-            box-sizing: border-box;
+            box-sizing: border-box; /* Memastikan border dihitung dalam tinggi */
         }
         
+        /* 2. Sidebar Hasil - Perbaikan tinggi dan layout tombol */
         #sidebar { 
             height: 720px; 
             flex: 1; 
@@ -65,7 +67,8 @@
             display: flex; 
             flex-direction: column; 
             justify-content: space-between; 
-            box-sizing: border-box;
+            box-sizing: border-box; /* Kunci agar sejajar dengan blocklyDiv */
+            overflow: hidden;
         }
         
         .reference-box { margin-bottom: 10px; }
@@ -89,10 +92,10 @@
             background: #8e44ad; color: white; border: none; 
             padding: 15px; width: 100%; border-radius: 8px; 
             cursor: pointer; font-weight: bold; font-size: 1em;
-            margin-top: auto;
+            margin-top: 20px; /* Jarak aman agar tidak keluar area */
         }
 
-        /* Menyesuaikan tampilan toolbox horizontal agar rapi */
+        /* Toolbox horizontal di atas */
         .blocklyToolboxDiv {
             background-color: #f9f0ff !important;
             border-bottom: 1px solid #8e44ad;
@@ -110,7 +113,7 @@
     </div>
 
     <div id="instruction-text">
-        <p>Ayo bantu Ibu cek tingkat keasaman bahan makanan di dapur! Caranya mudah: Tarik dan susun blok kode dari pilihan bahan di sebelah kiri ke halaman editor. Lihat bagaimana warna cairan di gelas berubah secara otomatis sesuai dengan ramuan yang kamu buat!</p>
+        <p>Ayo bantu Ibu cek tingkat keasaman bahan makanan di dapur! Caranya mudah: Tarik dan susun blok kode dari pilihan bahan di bagian atas ke halaman editor. Lihat bagaimana warna cairan di gelas berubah secara otomatis sesuai dengan ramuan yang kamu buat!</p>
     </div>
 
     <div id="main-container">
@@ -156,8 +159,8 @@
             "args0": [{
                 "type": "field_dropdown", "name": "FOOD",
                 "options": [
-                  ["🧂 Garam", "7.0"], 
-                  ["🍬 Gula", "7.01"], 
+                  ["🧂 Garam", "7.001"], /* Perbaikan: Nilai unik agar bisa dipilih */
+                  ["🍬 Gula", "7.002"], 
                   ["🧪 Cuka", "2.5"], 
                   ["🍋 Jus Lemon", "2.2"],
                   ["🥤 Soda", "3.0"], 
@@ -185,13 +188,12 @@
           }
         ]);
 
-        // Konfigurasi agar Toolbox berada di ATAS secara HORIZONTAL
         const workspace = Blockly.inject('blocklyDiv', { 
             toolbox: document.getElementById('toolbox'), 
             trashcan: true,
             scrollbars: true,
-            horizontalLayout: true, // Membuat daftar blok horizontal
-            toolboxPosition: 'start', // Posisi di awal (atas jika horizontal)
+            horizontalLayout: true,
+            toolboxPosition: 'start',
             move: { drag: true, wheel: true }
         });
 
